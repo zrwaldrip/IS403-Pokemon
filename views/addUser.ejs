@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Add User</title>
+    </head>
+    <body>
+        <form action="/addUser" method="post">
+            <label for="username">User Name: </label>
+            <input type="text" id="username" name="username">
+            <br><br>
+            <label for="password">Password: </label>
+            <input type="password" id="password" name="password">
+            <br><br>
+            <div>
+                <fieldset style="padding: 20px;">
+                    <legend>User Level</legend>
+                    <input type="radio" value="M" id="levelM" name="level">
+                    <label for="levelM">M</label>
+                    <br>
+                    <input type="radio" value="U" id="levelU" name="level">
+                    <label for="levelU">U</label>
+                </fieldset>
+            </div>
+            <br><br>
+            <input type="submit" value="Save User">
+            <a href="/" type="btn btn-danger">Back</a>
+        </form>
+    </body>
+</html>

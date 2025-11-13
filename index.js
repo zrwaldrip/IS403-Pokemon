@@ -1,0 +1,143 @@
+// Zach Waldrip Section 3
+// This project loads pokemon from a database and allows you to search for a pokemon
+
+// Load environment variables from .env file
+require("dotenv").config();
+// Import required modules
+const express = require("express");
+const session = require("express-session");
+let path = require("path");
+let bodyParser = require("body-parser")
+// Initialize Express application
+let app = express();
+
+// Set EJS as the template engine for rendering views
+app.set("view engine", "ejs");
+
+// Set the port from environment variable or use default port 3000
+const port = process.env.PORT || 3000;
+
+// Configure session middleware
+// Sessions allow the server to maintain user state across requests
+app.use(
+    session(
+        {
+    secret: process.env.SESSION_SECRET || 'fallback-secret-key', // Secret key for signing session cookies
+    resave: false, // Don't save session if it wasn't modified
+    saveUninitialized: false, // Don't create session until something is stored
+        }
+    )
+);
+
+// Initialize Knex database connection
+// Knex is a SQL query builder for PostgreSQL, MySQL, etc.
+const knex = require("knex")({
+    client: "pg", // PostgreSQL client
+    connection: {
+        host : process.env.DB_HOST || "localhost", // Database host
+        user : process.env.DB_USER || "postgres", // Database user
+        password : process.env.DB_PASSWORD || "admin", // Database password
+        database : process.env.DB_NAME || "assignment3", // Database name
+        port : process.env.DB_PORT || 5432  // Database port (PostgreSQL default is 5432)
+    }
+});
+
+// Middleware to parse URL-encoded form data (from POST requests)
+app.use(express.urlencoded({extended: true}));
+
+async function getPokemon() {
+    let pokemon = await knex.select().from("pokemon")
+            .orderBy("description");
+    return pokemon;
+}
+
+// Route: GET / - Home page
+// Renders the index page with empty pokemon array and no error message
+app.get("/", async (req, res) => {
+    if (req.session.isLoggedIn) {
+        let pokemon = await getPokemon();
+        // Render index page with pokemon data and no error message
+        res.render("index", {pokemon: pokemon, errMessage: "", username: req.session.username, userLevel: req.session.level });
+    }
+    else {
+        res.render("login", {errMessage: "Please log in"})
+    }
+});
+
+app.get("/addUser", (req, res) => {
+    if (req.session.isLoggedIn == true) {
+        res.render("addUser");
+    }
+    else {
+        res.redirect("/");
+    }
+});
+
+// Route: POST /searchPokemon - Search for a specific Pokemon
+// Takes a Pokemon name from the form, searches the database, and displays results
+app.get("/searchPokemon", (req, res) => {
+    // Get the Pokemon name from the form submission
+    let pokemonName = req.query.pokemon;
+
+    // Query database: select description and base_total columns
+    // Use LOWER() to make the search case-insensitive
+    knex.select("description", "base_total").from("pokemon")
+        .whereRaw("LOWER(description) = ?", [pokemonName.toLowerCase()])
+        .then(async foundPokemon => {
+            // If Pokemon is found (array has items)
+            if (foundPokemon.length != 0) {
+                // Render search result page with the found Pokemon
+                res.render("searchResult", {pokemon : foundPokemon[0]})
+            }
+            else {
+                // If not found, render index page with error message
+                let pokemon = await getPokemon();
+                // Render index page with pokemon data and no error message
+                res.render("index", {pokemon: pokemon, errMessage: `Cannot find ${pokemonName}`,
+                    username: req.session.username, userLevel: req.session.level });
+            }
+        })
+        .catch(async err => {
+            // Handle any database errors
+            console.error(err);
+            let pokemon = await getPokemon();
+            // Render index page with pokemon data and no error message
+            res.render("index", {pokemon: pokemon, errMessage: "An error occurred while searching for the pokemon",
+                    username: req.session.username, userLevel: req.session.level });
+    });
+});
+
+app.post("/addUser", (req, res) => {
+        knex("users").insert(req.body).then(users => {
+        res.redirect("/");
+    })
+});
+
+app.get("/logout", (req, res) => {
+    req.session.isLoggedIn = false;
+    res.render("login", {errMessage: "Please log in"});
+});
+
+app.post("/login", (req, res) => {
+    username = req.body.username;
+    password = req.body.password;
+
+    knex.select("username", "password", "level").from("users")
+        .where("username", username).andWhere("password", password)
+        .then(user => {
+            if (user.length > 0) {
+                req.session.isLoggedIn = true;
+                req.session.username = username;
+                req.session.level = user[0].level;
+                res.redirect("/");
+            }
+            else {
+                res.render("login", { errMessage: "Invalid Credentials" })
+            }
+        });
+});
+
+// Start the server and listen on the specified port
+app.listen(port, () => {
+    console.log("The server is listening");
+});
