@@ -1,29 +1,178 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Add User</title>
-    </head>
-    <body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add User</title>
+    <style>
+        /* Reset default browser styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        /* Body styling - sets overall page appearance */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        /* Main container - centers content and adds white background card */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        /* Page heading styling */
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+        /* Button styling - for the "Show Pokemon" link */
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            margin-bottom: 30px;
+        }
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        /* Table styling - for displaying Pokemon data */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            background: white;
+        }
+        /* Table header - dark background for column names */
+        thead {
+            background-color: #34495e;
+            color: white;
+        }
+        th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        /* Table cells - spacing and borders */
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        /* Row hover effect - highlights row on mouse over */
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        /* Form styling */
+        form {
+            margin-bottom: 30px;
+        }
+        /* Fieldset - groups form elements */
+        fieldset {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 20px;
+            width: 100% !important;
+            margin-bottom: 15px;
+        }
+        /* Legend - form section title */
+        legend {
+            padding: 0 10px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 18px;
+        }
+        /* Label styling */
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+        /* Text input styling */
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        /* Input focus state - blue border when user clicks in field */
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        /* Radio button styling */
+        input[type="radio"] {
+            margin-right: 8px;
+            margin-bottom: 10px;
+        }
+        /* Submit button styling */
+        button[type="submit"],
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button[type="submit"]:hover,
+        input[type="submit"]:hover {
+            background-color: #229954;
+        }
+        /* Error message styling - displayed when Pokemon not found */
+        .error-message {
+            background-color: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 4px;
+            border-left: 4px solid #c33;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Add User</h1>
         <form action="/addUser" method="post">
-            <label for="username">User Name: </label>
-            <input type="text" id="username" name="username">
-            <br><br>
-            <label for="password">Password: </label>
-            <input type="password" id="password" name="password">
-            <br><br>
-            <div>
-                <fieldset style="padding: 20px;">
-                    <legend>User Level</legend>
-                    <input type="radio" value="M" id="levelM" name="level">
-                    <label for="levelM">M</label>
-                    <br>
-                    <input type="radio" value="U" id="levelU" name="level">
-                    <label for="levelU">U</label>
-                </fieldset>
-            </div>
-            <br><br>
-            <input type="submit" value="Save User">
-            <a href="/" type="btn btn-danger">Back</a>
+            <fieldset>
+                <legend>User Information</legend>
+                <label for="username">User Name:</label>
+                <input type="text" id="username" name="username" required>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </fieldset>
+            <fieldset>
+                <legend>User Level</legend>
+                <input type="radio" value="M" id="levelM" name="level" required>
+                <label for="levelM" style="display: inline-block; margin-right: 20px;">M</label>
+                <input type="radio" value="U" id="levelU" name="level" required>
+                <label for="levelU" style="display: inline-block;">U</label>
+            </fieldset>
+            <button type="submit">Save User</button>
         </form>
-    </body>
+        <a href="/" class="btn">Back</a>
+    </div>
+</body>
 </html>

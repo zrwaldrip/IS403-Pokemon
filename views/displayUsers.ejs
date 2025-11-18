@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pokemon Database</title>
+    <title>Display Users</title>
     <style>
         /* Reset default browser styles */
         * {
@@ -144,26 +144,20 @@
 </head>
 <body>
     <div class="container">
-        <h1>Pokemon Database</h1>
-        <h2>Welcome <%= username %></h2>
-
-        <% if (userLevel == "M") { %>
-            <h3>You are a manager</h3>
-        <% } 
-        else { %>
-            <h3>You are a user</h3>
+        <h1>Users</h1>
+        <% if (typeof errMessage !== 'undefined' && errMessage) { %>
+            <div class="error-message">
+                <%= errMessage %>
+            </div>
         <% } %>
-        <br><br>
 
-        
-        <!-- EJS template logic: Only show table if pokemon array has items -->
-        <% if (pokemon.length > 0) { %>
+        <% if (users.length > 0) { %>
         <table>
             <thead>
                 <tr>
                     <th>Index</th>
-                    <th>Name</th>
-                    <th>Hit Points</th>
+                    <th>Username</th>
+                    <th>Password</th>
                     <% if (userLevel == "M") { %>
                     <th>Edit</th>
                     <th>Delete</th>
@@ -172,20 +166,20 @@
             </thead>
             <tbody>
                 <!-- EJS loop: Iterate through pokemon array and display each Pokemon -->
-                <% for (let count = 0; count < pokemon.length; count++) { %>
+                <% for (let count = 0; count < users.length; count++) { %>
                     <tr>
-                        <td><%= pokemon[count].id %></td>
-                        <td><%= pokemon[count].description %></td>
-                        <td><%= pokemon[count].base_total %></td>
+                        <td><%= users[count].id %></td>
+                        <td><%= users[count].username %></td>
+                        <td><%= users[count].password %></td>
                         <% if (userLevel == "M") { %>
                         <td>
-                            <form action="/editPokemon/<%= pokemon[count].id %>" method="get">
+                            <form action="/editUser/<%= users[count].id %>" method="get">
                                 <button type="submit" class="btn">Edit</button>
                             </form>
                         </td>
                         <td>
-                            <form action="/deletePokemon/<%= pokemon[count].id %>" method="POST"
-                                onsubmit="return confirm('Are you sure you want to delete this pokemon?')">
+                            <form action="/deleteUser/<%= users[count].id %>" method="post"
+                                onsubmit="return confirm('Are you sure you want to delete this user?');">
                                 <button type="submit" class="btn">Delete</button>
                             </form>
                         </td>
@@ -195,31 +189,8 @@
             </tbody>
         </table>
         <% } %>
-        
-        <!-- Search form: Submits POST request to /searchPokemon route -->
-        <form action="/searchPokemon" method="get">
-            <fieldset>
-                <legend>Search</legend>
-                <label for="pokemon">Pokemon Name</label>
-                <!-- Input field for Pokemon name - required attribute ensures user enters a value -->
-                <input type="text" id="pokemon" name="pokemon" placeholder="Enter a Pokemon name" required>
-                <button type="submit">Search</button>
-            </fieldset>
-        </form>
-        
-        <!-- EJS template logic: Display error message if one exists -->
-        <% if (errMessage && errMessage !== "") { %>
-            <div class="error-message">
-                <!-- EJS output: Displays the error message from server -->
-                <%= errMessage %>
-            </div>
-        <% } %>
-        <a href="/logout" class="btn">Logout</a>
-        <a href="/displayUsers" class="btn">Display Users</a>
 
-        <% if (userLevel == "M") { %>
-            <a href="/addUser" class="btn">Add User</a>
-        <% } %>
+        <a href="/" class="btn">Go Back</a>
     </div>
 </body>
 </html>

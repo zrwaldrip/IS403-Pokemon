@@ -60,7 +60,7 @@ app.get("/", async (req, res) => {
         res.render("index", {pokemon: pokemon, errMessage: "", username: req.session.username, userLevel: req.session.level });
     }
     else {
-        res.render("login", {errMessage: "Please log in"})
+        res.render("login", {errMessage: ""})
     }
 });
 
@@ -135,6 +135,86 @@ app.post("/login", (req, res) => {
                 res.render("login", { errMessage: "Invalid Credentials" })
             }
         });
+});
+
+app.get("/editPokemon/:id", (req, res) => {
+    knex.select().from("pokemon").where("id", req.params.id)
+        .then(pokemon => {
+            res.render("editPokemon", { pokemon: pokemon[0] });
+        })
+});
+
+app.post("/editPokemoon/:id", (req, res) => {
+    let updatedData = { description: req.body.description, base_total: req.body.base_total};
+
+    knex("pokemon").where({ id: req.params.id })
+        .update(updatedData).then(() => {
+            res.redirect("/")
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).render("/editPokemon", {errMessage: "Error updating pokemon"});
+        });
+});
+
+app.post("/deletePokemon/:id", (req, res) => {
+    knex("pokemon").where("id", req.params.id).del()
+        .then(user => {
+            res.redirect("/");
+        })
+        .catch(err => {
+            console.error("Error deleting the pokemon:", fetchErr.message);
+        })
+});
+
+app.get("/displayUsers", (req, res) => {
+    knex("users").then((users) => {
+        res.render("displayUsers", {users: users, userLevel: req.session.level})
+    })
+    .catch(err => {
+        console.error(err);
+        res.status(500).send("Error fetching users");
+    })
+});
+
+app.get("/editUser/:id", (req, res) => {
+    knex.select().from("users").where("id", req.params.id)
+        .then(user => {
+            res.render("editUser", { user: user[0] });
+        })
+        .catch(err => {
+            res.status(500).render("displayUsers", {users: [], errMessage: "Unable to edit user"})
+        })
+});
+
+app.post("/editUser/:id", (req, res) => {
+    let updatedData = { username: req.body.username, password: req.body.password};
+
+    knex("users").where({ id: req.params.id })
+        .update(updatedData).then(() => {
+            res.redirect("/")
+        })
+        .catch((fetchErr) => {
+            console.error("Error fetching user after update failure:", fetchErr.message);
+            res.status(500).render("displayUsers", {
+                users: [],
+                errMessage: "Unable to update user."
+            });
+        })
+});
+
+app.post("/deleteUser/:id", (req, res) => {
+    knex("users").where("id", req.params.id).del()
+        .then(user => {
+            res.redirect("/");
+        })
+        .catch(err => {
+            console.error("Error deleting the user:", fetchErr.message);
+            res.status(500).render("displayUsers", {
+                users: [],
+                errMessage: "Unable to delete the user."
+            });
+        })
 });
 
 // Start the server and listen on the specified port
