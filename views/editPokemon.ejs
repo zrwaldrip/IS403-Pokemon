@@ -151,6 +151,7 @@
 </head>
 <body>
     <div class="container">
+        <!-- EJS template logic: Display error message if one exists -->
         <% if (typeof errMessage !== 'undefined' && errMessage) { %>
             <div class="error-message">
                 <%= errMessage %>
@@ -158,17 +159,22 @@
         <% } %>
 
         <h1>Edit Page</h1>
+        <!-- EJS output: Display the name of the Pokemon being edited -->
         <h2>Edit <%= pokemon.description %></h2>
+        <!-- Form to edit Pokemon - submits to POST /editPokemon/:id route -->
         <form action="/editPokemon/<%= pokemon.id %>" method="post">
             <fieldset>
                 <legend>Pokemon Information</legend>
+                <!-- Pokemon name input field with current value as placeholder -->
                 <label for="description">Name</label>
                 <input type="text" id="description" name="description" placeholder="<%= pokemon.description %>" required>
+                <!-- Base HP input field with current value as placeholder -->
                 <label for="base_total">Base HP</label>
                 <input type="number" name="base_total" id="base_total" placeholder="<%= pokemon.base_total %>" required>
             </fieldset>
             <button type="submit">Submit Edit</button>
         </form>
+        <!-- Link to return to home page -->
         <a href="/" class="btn">Go Back</a>
     </div>
 </body>

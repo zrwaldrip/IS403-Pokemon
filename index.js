@@ -45,6 +45,9 @@ const knex = require("knex")({
 // Middleware to parse URL-encoded form data (from POST requests)
 app.use(express.urlencoded({extended: true}));
 
+// Function: getPokemon()
+// Retrieves all Pokemon from the database, ordered by description
+// Returns: Array of Pokemon objects
 async function getPokemon() {
     let pokemon = await knex.select().from("pokemon")
             .orderBy("description");
@@ -64,6 +67,8 @@ app.get("/", async (req, res) => {
     }
 });
 
+// Route: GET /addUser - Display form to add a new user
+// Only accessible if user is logged in, otherwise redirects to home page
 app.get("/addUser", (req, res) => {
     if (req.session.isLoggedIn == true) {
         res.render("addUser");
@@ -107,17 +112,24 @@ app.get("/searchPokemon", (req, res) => {
     });
 });
 
+// Route: POST /addUser - Create a new user in the database
+// Receives user data from the form and inserts it into the users table
 app.post("/addUser", (req, res) => {
         knex("users").insert(req.body).then(users => {
         res.redirect("/");
     })
 });
 
+// Route: GET /logout - Log out the current user
+// Clears the session and redirects to the login page
 app.get("/logout", (req, res) => {
     req.session.isLoggedIn = false;
     res.render("login", {errMessage: "Please log in"});
 });
 
+// Route: POST /login - Authenticate user login
+// Validates username and password against the database
+// If valid, creates a session and stores user info; otherwise shows error message
 app.post("/login", (req, res) => {
     username = req.body.username;
     password = req.body.password;
@@ -137,6 +149,8 @@ app.post("/login", (req, res) => {
         });
 });
 
+// Route: GET /editPokemon/:id - Display form to edit a specific Pokemon
+// Retrieves the Pokemon by ID from the database and renders the edit form
 app.get("/editPokemon/:id", (req, res) => {
     knex.select().from("pokemon").where("id", req.params.id)
         .then(pokemon => {
@@ -144,7 +158,10 @@ app.get("/editPokemon/:id", (req, res) => {
         })
 });
 
-app.post("/editPokemoon/:id", (req, res) => {
+// Route: POST /editPokemon/:id - Update a Pokemon in the database
+// Receives updated Pokemon data from the form and updates the database record
+// Redirects to home page on success, or shows error on failure
+app.post("/editPokemon/:id", (req, res) => {
     let updatedData = { description: req.body.description, base_total: req.body.base_total};
 
     knex("pokemon").where({ id: req.params.id })
@@ -157,6 +174,9 @@ app.post("/editPokemoon/:id", (req, res) => {
         });
 });
 
+// Route: POST /deletePokemon/:id - Delete a Pokemon from the database
+// Removes the Pokemon record with the specified ID
+// Redirects to home page on success, or logs error on failure
 app.post("/deletePokemon/:id", (req, res) => {
     knex("pokemon").where("id", req.params.id).del()
         .then(user => {
@@ -167,6 +187,8 @@ app.post("/deletePokemon/:id", (req, res) => {
         })
 });
 
+// Route: GET /displayUsers - Display all users in the database
+// Retrieves all users and renders the displayUsers page with user data and current user's level
 app.get("/displayUsers", (req, res) => {
     knex("users").then((users) => {
         res.render("displayUsers", {users: users, userLevel: req.session.level})
@@ -177,6 +199,8 @@ app.get("/displayUsers", (req, res) => {
     })
 });
 
+// Route: GET /editUser/:id - Display form to edit a specific user
+// Retrieves the user by ID from the database and renders the edit form
 app.get("/editUser/:id", (req, res) => {
     knex.select().from("users").where("id", req.params.id)
         .then(user => {
@@ -187,6 +211,9 @@ app.get("/editUser/:id", (req, res) => {
         })
 });
 
+// Route: POST /editUser/:id - Update a user in the database
+// Receives updated user data from the form and updates the database record
+// Redirects to home page on success, or shows error on failure
 app.post("/editUser/:id", (req, res) => {
     let updatedData = { username: req.body.username, password: req.body.password};
 
@@ -203,6 +230,9 @@ app.post("/editUser/:id", (req, res) => {
         })
 });
 
+// Route: POST /deleteUser/:id - Delete a user from the database
+// Removes the user record with the specified ID
+// Redirects to home page on success, or shows error on failure
 app.post("/deleteUser/:id", (req, res) => {
     knex("users").where("id", req.params.id).del()
         .then(user => {

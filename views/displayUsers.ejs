@@ -145,12 +145,14 @@
 <body>
     <div class="container">
         <h1>Users</h1>
+        <!-- EJS template logic: Display error message if one exists -->
         <% if (typeof errMessage !== 'undefined' && errMessage) { %>
             <div class="error-message">
                 <%= errMessage %>
             </div>
         <% } %>
 
+        <!-- EJS template logic: Only show table if users array has items -->
         <% if (users.length > 0) { %>
         <table>
             <thead>
@@ -158,6 +160,8 @@
                     <th>Index</th>
                     <th>Username</th>
                     <th>Password</th>
+                    <th>Level</th>
+                    <!-- EJS template logic: Only show Edit/Delete columns if user is a manager -->
                     <% if (userLevel == "M") { %>
                     <th>Edit</th>
                     <th>Delete</th>
@@ -165,19 +169,24 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- EJS loop: Iterate through pokemon array and display each Pokemon -->
+                <!-- EJS loop: Iterate through users array and display each user -->
                 <% for (let count = 0; count < users.length; count++) { %>
                     <tr>
+                        <!-- EJS output: Display user ID, username, and password -->
                         <td><%= users[count].id %></td>
                         <td><%= users[count].username %></td>
                         <td><%= users[count].password %></td>
+                        <td><%= users[count].level %></td>
+                        <!-- EJS template logic: Only show Edit/Delete buttons if user is a manager -->
                         <% if (userLevel == "M") { %>
                         <td>
+                            <!-- Form to edit user - submits to GET /editUser/:id route -->
                             <form action="/editUser/<%= users[count].id %>" method="get">
                                 <button type="submit" class="btn">Edit</button>
                             </form>
                         </td>
                         <td>
+                            <!-- Form to delete user - submits to POST /deleteUser/:id route with confirmation -->
                             <form action="/deleteUser/<%= users[count].id %>" method="post"
                                 onsubmit="return confirm('Are you sure you want to delete this user?');">
                                 <button type="submit" class="btn">Delete</button>
@@ -190,6 +199,7 @@
         </table>
         <% } %>
 
+        <!-- Link to return to home page -->
         <a href="/" class="btn">Go Back</a>
     </div>
 </body>

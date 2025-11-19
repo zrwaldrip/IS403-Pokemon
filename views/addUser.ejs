@@ -155,16 +155,20 @@
 <body>
     <div class="container">
         <h1>Add User</h1>
+        <!-- Form to add a new user - submits to POST /addUser route -->
         <form action="/addUser" method="post">
             <fieldset>
                 <legend>User Information</legend>
+                <!-- Username input field -->
                 <label for="username">User Name:</label>
                 <input type="text" id="username" name="username" required>
+                <!-- Password input field -->
                 <label for="password">Password:</label>
                 <input type="password" id="password" name="password" required>
             </fieldset>
             <fieldset>
                 <legend>User Level</legend>
+                <!-- Radio buttons for user level: M (Manager) or U (User) -->
                 <input type="radio" value="M" id="levelM" name="level" required>
                 <label for="levelM" style="display: inline-block; margin-right: 20px;">M</label>
                 <input type="radio" value="U" id="levelU" name="level" required>
@@ -172,6 +176,7 @@
             </fieldset>
             <button type="submit">Save User</button>
         </form>
+        <!-- Link to return to home page -->
         <a href="/" class="btn">Back</a>
     </div>
 </body>

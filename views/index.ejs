@@ -145,8 +145,10 @@
 <body>
     <div class="container">
         <h1>Pokemon Database</h1>
+        <!-- EJS output: Display the logged-in username -->
         <h2>Welcome <%= username %></h2>
 
+        <!-- EJS template logic: Display user role based on user level -->
         <% if (userLevel == "M") { %>
             <h3>You are a manager</h3>
         <% } 
@@ -164,6 +166,7 @@
                     <th>Index</th>
                     <th>Name</th>
                     <th>Hit Points</th>
+                    <!-- EJS template logic: Only show Edit/Delete columns if user is a manager -->
                     <% if (userLevel == "M") { %>
                     <th>Edit</th>
                     <th>Delete</th>
@@ -174,16 +177,20 @@
                 <!-- EJS loop: Iterate through pokemon array and display each Pokemon -->
                 <% for (let count = 0; count < pokemon.length; count++) { %>
                     <tr>
+                        <!-- EJS output: Display Pokemon ID, name (description), and base total (hit points) -->
                         <td><%= pokemon[count].id %></td>
                         <td><%= pokemon[count].description %></td>
                         <td><%= pokemon[count].base_total %></td>
+                        <!-- EJS template logic: Only show Edit/Delete buttons if user is a manager -->
                         <% if (userLevel == "M") { %>
                         <td>
+                            <!-- Form to edit Pokemon - submits to GET /editPokemon/:id route -->
                             <form action="/editPokemon/<%= pokemon[count].id %>" method="get">
                                 <button type="submit" class="btn">Edit</button>
                             </form>
                         </td>
                         <td>
+                            <!-- Form to delete Pokemon - submits to POST /deletePokemon/:id route with confirmation -->
                             <form action="/deletePokemon/<%= pokemon[count].id %>" method="POST"
                                 onsubmit="return confirm('Are you sure you want to delete this pokemon?')">
                                 <button type="submit" class="btn">Delete</button>
@@ -196,7 +203,7 @@
         </table>
         <% } %>
         
-        <!-- Search form: Submits POST request to /searchPokemon route -->
+        <!-- Search form: Submits GET request to /searchPokemon route -->
         <form action="/searchPokemon" method="get">
             <fieldset>
                 <legend>Search</legend>
@@ -214,9 +221,11 @@
                 <%= errMessage %>
             </div>
         <% } %>
+        <!-- Navigation links -->
         <a href="/logout" class="btn">Logout</a>
         <a href="/displayUsers" class="btn">Display Users</a>
 
+        <!-- EJS template logic: Only show "Add User" link if user is a manager -->
         <% if (userLevel == "M") { %>
             <a href="/addUser" class="btn">Add User</a>
         <% } %>

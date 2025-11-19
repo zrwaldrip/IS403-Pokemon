@@ -152,17 +152,22 @@
 <body>
     <div class="container">
         <h1>Edit Page</h1>
+        <!-- EJS output: Display the username of the user being edited -->
         <h2>Edit <%= user.username %></h2>
+        <!-- Form to edit user - submits to POST /editUser/:id route -->
         <form action="/editUser/<%= user.id %>" method="post">
             <fieldset>
                 <legend>User Information</legend>
+                <!-- Username input field with current value as placeholder -->
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" placeholder="<%= user.username %>" required>
+                <!-- Password input field with current value as placeholder -->
                 <label for="password">Password</label>
                 <input type="text" name="password" id="password" placeholder="<%= user.password %>" required>
             </fieldset>
             <button type="submit">Submit Edit</button>
         </form>
+        <!-- Link to return to the display users page -->
         <a href="/displayUsers" class="btn">Go Back</a>
     </div>
 </body>
